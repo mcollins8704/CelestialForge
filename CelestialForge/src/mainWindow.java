@@ -1,18 +1,21 @@
+import forge.*;
+import toolKits.*;
+import java.awt.Color;
 import javax.swing.JFileChooser;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -41,41 +44,55 @@ public class mainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnOpen = new javax.swing.JButton();
-        btnImport = new javax.swing.JButton();
-        btnExport = new javax.swing.JButton();
-        currentPerkPane = new javax.swing.JScrollPane();
-        currentPerks = new javax.swing.JList<>();
-        btnAdd = new javax.swing.JButton();
-        btnRemove = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         availablePerkPane = new javax.swing.JScrollPane();
         availablePerks = new javax.swing.JList<>();
+        btnAdd = new javax.swing.JButton();
+        currentPerkPane = new javax.swing.JScrollPane();
+        currentPerks = new javax.swing.JList<>();
+        txtCP = new javax.swing.JTextField();
+        btnRemove = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtPerkDescription = new javax.swing.JTextArea();
-        txtCP = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
         btnRollPerk = new javax.swing.JButton();
+        btnRollPerk1 = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        currentDomainPane = new javax.swing.JScrollPane();
+        currentDomains = new javax.swing.JList<>();
+        btnAddDomain = new javax.swing.JButton();
+        btnRemoveDomain = new javax.swing.JButton();
+        availableDomainPane = new javax.swing.JScrollPane();
+        availableDomains = new javax.swing.JList<>();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        mnuOpen = new javax.swing.JMenuItem();
+        mnuLoad = new javax.swing.JMenuItem();
+        mnuSave = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnOpen.setText("Open");
-        btnOpen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOpenActionPerformed(evt);
+        availablePerks.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        availablePerks.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                availablePerksValueChanged(evt);
             }
         });
+        availablePerkPane.setViewportView(availablePerks);
 
-        btnImport.setText("Import");
-        btnImport.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd.setText("<<<");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnImportActionPerformed(evt);
-            }
-        });
-
-        btnExport.setText("Export");
-        btnExport.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExportActionPerformed(evt);
+                btnAddActionPerformed(evt);
             }
         });
 
@@ -91,12 +108,8 @@ public class mainWindow extends javax.swing.JFrame {
         });
         currentPerkPane.setViewportView(currentPerks);
 
-        btnAdd.setText("<<<");
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
+        txtCP.setText("0000");
+        txtCP.setText("0");
 
         btnRemove.setText(">>>");
         btnRemove.addActionListener(new java.awt.event.ActionListener() {
@@ -105,17 +118,7 @@ public class mainWindow extends javax.swing.JFrame {
             }
         });
 
-        availablePerks.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        availablePerks.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                availablePerksValueChanged(evt);
-            }
-        });
-        availablePerkPane.setViewportView(availablePerks);
+        jLabel1.setText("CP");
 
         txtPerkDescription.setColumns(20);
         txtPerkDescription.setLineWrap(true);
@@ -124,11 +127,6 @@ public class mainWindow extends javax.swing.JFrame {
         txtPerkDescription.setWrapStyleWord(true);
         jScrollPane3.setViewportView(txtPerkDescription);
 
-        txtCP.setText("0000");
-        txtCP.setText("0");
-
-        jLabel1.setText("CP");
-
         btnRollPerk.setText("Roll");
         btnRollPerk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,274 +134,480 @@ public class mainWindow extends javax.swing.JFrame {
             }
         });
 
+        btnRollPerk1.setText("ReRoll");
+        btnRollPerk1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRollPerk1ActionPerformed(evt);
+            }
+        });
+
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(currentPerkPane, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAdd)
+                            .addComponent(btnRemove))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnRollPerk1)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnRollPerk)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCP, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(availablePerkPane))))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnRollPerk1)
+                        .addComponent(btnRollPerk)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(txtCP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(currentPerkPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(availablePerkPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(6, 6, 6))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAdd)
+                        .addGap(6, 6, 6)
+                        .addComponent(btnRemove)
+                        .addGap(65, 65, 65)))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jTabbedPane1.addTab("Perks", jPanel1);
+
+        currentDomains.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        currentDomains.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                currentDomainsValueChanged(evt);
+            }
+        });
+        currentDomainPane.setViewportView(currentDomains);
+
+        btnAddDomain.setText("<<<");
+        btnAddDomain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddDomainActionPerformed(evt);
+            }
+        });
+
+        btnRemoveDomain.setText(">>>");
+        btnRemoveDomain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveDomainActionPerformed(evt);
+            }
+        });
+
+        availableDomains.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        availableDomains.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                availableDomainsValueChanged(evt);
+            }
+        });
+        availableDomainPane.setViewportView(availableDomains);
+
+        jLabel2.setText("Available Domains");
+
+        jLabel3.setText("Current Domains");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(currentDomainPane, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAddDomain)
+                            .addComponent(btnRemoveDomain))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(availableDomainPane, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(availableDomainPane)
+                        .addComponent(currentDomainPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnAddDomain)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoveDomain)
+                        .addGap(55, 55, 55)))
+                .addContainerGap(360, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Domains", jPanel2);
+
+        jMenu1.setText("File");
+
+        mnuOpen.setText("Open");
+        mnuOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuOpenActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mnuOpen);
+
+        mnuLoad.setText("Load");
+        mnuLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuLoadActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mnuLoad);
+
+        mnuSave.setText("Save");
+        mnuSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuSaveActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mnuSave);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(currentPerkPane)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnOpen)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnImport)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnExport)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnAdd)
-                                    .addComponent(btnRemove))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(availablePerkPane))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 158, Short.MAX_VALUE)
-                                .addComponent(btnRollPerk)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCP, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnOpen)
-                    .addComponent(btnImport)
-                    .addComponent(btnExport)
-                    .addComponent(txtCP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(btnRollPerk))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(availablePerkPane)
-                            .addComponent(currentPerkPane))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnAdd)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRemove)
-                        .addGap(61, 61, 61)))
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
-        File file;
+    private void setModels(){
+        availablePerksModel.clear();
+        currentPerksModel.clear();
+        availableDomainsModel.clear();
+        currentDomainsModel.clear();
+        for(Domain dom : forge.getDomains()){
+            if(dom.isActive()){
+                currentDomainsModel.addElement(dom.getName().trim());
+                for(Perk perk : dom.getPerks()){
+                    if(perk.isActive()){
+                        currentPerksModel.addElement(perk.getName().trim());
+                    }else{
+                        availablePerksModel.addElement(perk.getName().trim());
+                    }
+                }
+            }else{
+                availableDomainsModel.addElement(dom.getName().trim());
+            }
+        }
+        this.availablePerks.setModel(availablePerksModel);
+        this.currentPerks.setModel(currentPerksModel);
+        this.availableDomains.setModel(availableDomainsModel);
+        this.currentDomains.setModel(currentDomainsModel);
+    }
+    
+    private void searchForPerkInModels(String searchText){
+        availablePerksModel.clear();
+        currentPerksModel.clear();
+        availableDomainsModel.clear();
+        currentDomainsModel.clear();
+        for(Domain dom : forge.getDomains()){
+            if(dom.isActive()){
+                currentDomainsModel.addElement(dom.getName().trim());
+                for(Perk perk : dom.getPerks()){
+                    if(perk.isActive() && perk.getName().toLowerCase().contains(searchText)){
+                        currentPerksModel.addElement(perk.getName().trim());
+                    }else if (perk.getName().toLowerCase().contains(searchText)){
+                        availablePerksModel.addElement(perk.getName().trim());
+                    }
+                }
+            }else{
+                availableDomainsModel.addElement(dom.getName().trim());
+            }
+        }
+        this.availablePerks.setModel(availablePerksModel);
+        this.currentPerks.setModel(currentPerksModel);
+        this.availableDomains.setModel(availableDomainsModel);
+        this.currentDomains.setModel(currentDomainsModel);
+    }
+    
+    
+    
+    private void currentDomainsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_currentDomainsValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_currentDomainsValueChanged
+
+    private void btnAddDomainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDomainActionPerformed
+        for(Domain dom : forge.getDomains()){
+            if(dom.getName().equals(this.availableDomains.getSelectedValue())){
+                dom.setActive(true);
+            }
+        }
+        this.setModels();
+    }//GEN-LAST:event_btnAddDomainActionPerformed
+
+    private void btnRemoveDomainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveDomainActionPerformed
+        for(Domain dom : forge.getDomains()){
+            if(dom.getName().equals(this.currentDomains.getSelectedValue())){
+                dom.setActive(false);
+            }
+        }
+        this.setModels();
+    }//GEN-LAST:event_btnRemoveDomainActionPerformed
+
+    private void availableDomainsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_availableDomainsValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_availableDomainsValueChanged
+
+    private void mnuLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuLoadActionPerformed
+        JFileChooser save = new JFileChooser();
+        save.setDialogTitle("Open File");
+        
+        if(save.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+            this.forge = WriterReader.read(save.getSelectedFile());
+        }
+        this.setModels();
+    }//GEN-LAST:event_mnuLoadActionPerformed
+
+    private void mnuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuSaveActionPerformed
+        JFileChooser save = new JFileChooser();
+        save.setDialogTitle("Save File");
+        
+        if(save.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+            WriterReader.write(this.forge, save.getSelectedFile());
+        }
+    }//GEN-LAST:event_mnuSaveActionPerformed
+
+    private void mnuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuOpenActionPerformed
         StringBuilder data = new StringBuilder();
-        ArrayList<String> perks = new ArrayList<>();
+        Domain domain = null;
+        ArrayList<Perk> perks = new ArrayList<>();
+        ArrayList<String> strPerkBlobs = new ArrayList<>();
         JFileChooser chooser = new JFileChooser();
-        availableModel = new DefaultListModel();
-        currentModel = new DefaultListModel();
+        availablePerksModel = new DefaultListModel();
+        currentPerksModel = new DefaultListModel();
         
         chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         int result = chooser.showOpenDialog(this);
         
         if(result == JFileChooser.APPROVE_OPTION){
-            file = chooser.getSelectedFile();
+            File file = chooser.getSelectedFile();
             try{
-                Scanner myReader = new Scanner(file);
+                Scanner myReader = new Scanner(file, "UTF-8");
                 while(myReader.hasNextLine()){
                     data.append(myReader.nextLine().trim() + System.lineSeparator());
                     data.append(System.lineSeparator());
                 }
-                System.out.println("past readlines");
-                for(String domain : data.toString().split("---")){
-                    if(domain.length() > 1 && (!domain.contains("Perks)") || !domain.contains("Domain"))){
-                        for(String perk : domain.split(System.lineSeparator()+ "-")){
-                            perks.add(perk);
+                
+                int domainCount = 0;
+                for(String line : data.toString().split("---")){
+                    if(line.length() > 1){
+                        //if domain line, create a new domain
+                        if((line.contains("Perks)") && line.contains("Domain"))){
+                            domain = new Domain(line, new ArrayList<Perk>());
+                        }else{
+                        //if not a domain line, it must be a perk line
+                            //use class method to add all perks from perk blob
+                            domain.parsePerks(line);
+                            
+                            //add all the perks from the domain to the celestial forge
+                            forge.addDomain(new Domain(domain.getName().toString(), domain.getPerks()));
+                            
+                            //reset for next domain
+                            domain = null;
+                            perks.clear();
+                            
                         }
                     }
                 }
             }catch(FileNotFoundException e){}
-            
-            availableModel.clear();
-            currentModel.clear();
-            for(String perk : perks){
-                if(perk.contains("CP)")){
-                    String[] pieces = perk.split("CP\\)");
-                    String perkName = "first";
-                    String perkDescription = "";
-                    int iteration = 0;
-                    for(String x : pieces){
-                        iteration = iteration+1;
-                        if(!perkName.equals("first")){
-                            perkDescription = perkDescription + System.lineSeparator() + x;
-                            if(pieces.length > iteration){
-                                perkDescription = perkDescription + "CP)";
-                            }
-                        }else{
-                            perkName = x + "CP)";
-                        }
-                    }
-                    perkList.put(perkName.trim(), perkDescription.trim());
-                    availableModel.addElement(perkName.trim());
-                }
-            }
-            this.availablePerks.setModel(availableModel);
-            this.currentPerks.setModel(currentModel);
+            this.setModels();
             
         }
         
-    }//GEN-LAST:event_btnOpenActionPerformed
+    }//GEN-LAST:event_mnuOpenActionPerformed
+
+    private void btnRollPerk1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRollPerk1ActionPerformed
+        int cpTotal = Integer.parseInt(this.txtCP.getText());
+        int perkCost;
+        this.txtCP.setText("" + cpTotal);
+
+        int randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
+        Pattern pattern = Pattern.compile("\\([0-9]{1,4}CP\\)");
+        Matcher matcher = pattern.matcher(this.availablePerksModel.getElementAt(randomNum).toString());
+        if (matcher.find()){
+            perkCost = Integer.parseInt(matcher.group(0).substring(1, matcher.group(0).length()-3));
+            if(perkCost <= cpTotal){
+                cpTotal = cpTotal - perkCost;
+                this.txtCP.setText(cpTotal + "");
+                this.currentPerksModel.addElement(this.availablePerksModel.getElementAt(randomNum));
+                this.availablePerksModel.removeElement(this.availablePerksModel.getElementAt(randomNum));
+            }
+        }
+    }//GEN-LAST:event_btnRollPerk1ActionPerformed
 
     private void btnRollPerkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRollPerkActionPerformed
         int cpTotal = Integer.parseInt(this.txtCP.getText());
         int perkCost;
         cpTotal = cpTotal + 100;
         this.txtCP.setText("" + cpTotal);
-        
-        int randomNum = ThreadLocalRandom.current().nextInt(0, this.availableModel.getSize());
+
+        int randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
         Pattern pattern = Pattern.compile("\\([0-9]{1,4}CP\\)");
-        Matcher matcher = pattern.matcher(this.availableModel.getElementAt(randomNum).toString());
+        Matcher matcher = pattern.matcher(this.availablePerksModel.getElementAt(randomNum).toString());
         if (matcher.find()){
             perkCost = Integer.parseInt(matcher.group(0).substring(1, matcher.group(0).length()-3));
             if(perkCost <= cpTotal){
                 cpTotal = cpTotal - perkCost;
                 this.txtCP.setText(cpTotal + "");
-                this.currentModel.addElement(this.availableModel.getElementAt(randomNum));
-                this.availableModel.removeElement(this.availableModel.getElementAt(randomNum));
+                this.currentPerksModel.addElement(this.availablePerksModel.getElementAt(randomNum));
+                this.availablePerksModel.removeElement(this.availablePerksModel.getElementAt(randomNum));
             }
         }
         //if(this.availableModel.get(randomNum))
         //\([0-9]{1,4}CP\)
     }//GEN-LAST:event_btnRollPerkActionPerformed
 
-    private void currentPerksValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_currentPerksValueChanged
-        this.txtPerkDescription.setText(perkList.get(this.currentPerks.getSelectedValue()));
-    }//GEN-LAST:event_currentPerksValueChanged
-
-    private void availablePerksValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_availablePerksValueChanged
-        this.txtPerkDescription.setText(perkList.get(this.availablePerks.getSelectedValue()));
-    }//GEN-LAST:event_availablePerksValueChanged
-
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        if(this.availablePerks.getSelectedValue().length() > 0){this.currentModel.addElement(this.availablePerks.getSelectedValue());}
-        this.availableModel.removeElement(this.availablePerks.getSelectedValue());
-    }//GEN-LAST:event_btnAddActionPerformed
-
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
-        if(this.currentPerks.getSelectedValue().length() > 0){this.availableModel.addElement(this.currentPerks.getSelectedValue());}
-        this.currentModel.removeElement(this.currentPerks.getSelectedValue());
-    }//GEN-LAST:event_btnRemoveActionPerformed
-
-    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        JFileChooser save = new JFileChooser();
-        save.setDialogTitle("Save File");
-        
-        int result = save.showSaveDialog(this);
-        if(result == JFileChooser.APPROVE_OPTION){
-            FileWriter csvWrite = null;
-            try {
-                File saveFile = save.getSelectedFile();
-                csvWrite = new FileWriter(save.getSelectedFile() + "");
-                if(this.currentModel.size() > 0){
-                    for(Object str : this.currentModel.toArray()){
-                        if(!str.equals(null)){
-                            String key = str.toString();
-                            csvWrite.write("current" + "||" + key + "||" + this.perkList.get(key).replace(System.lineSeparator(), "newLinePlacement") + System.lineSeparator());
-                        }
-                    }
-                }
-                if(this.availableModel.size() > 0){
-                    for(Object str : this.availableModel.toArray()){
-                        if(str != null){
-                            String key = str.toString();
-                            csvWrite.write("available" + "||" + key + "||" + this.perkList.get(key).replace(System.lineSeparator(), "newLinePlacement") + System.lineSeparator());
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                try {
-                    csvWrite.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        for(Domain dom : forge.getDomains()){
+            for(Perk perk : dom.getPerks()){
+                if(perk.getName().equals(this.currentPerks.getSelectedValue())){
+                    perk.setActive(false);
                 }
             }
         }
-        
-    }//GEN-LAST:event_btnExportActionPerformed
+        this.setModels();
+    }//GEN-LAST:event_btnRemoveActionPerformed
 
-    private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
-        File file;
-        ArrayList<String> perks = new ArrayList<>();
-        JFileChooser chooser = new JFileChooser();
-        availableModel = new DefaultListModel();
-        currentModel = new DefaultListModel();
-        
-        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = chooser.showOpenDialog(this);
-        
-        if(result == JFileChooser.APPROVE_OPTION){
-            file = chooser.getSelectedFile();
-            try{
-                Scanner myReader = new Scanner(file);
-                while(myReader.hasNextLine()){
-                    perks.add(myReader.nextLine());
+    private void currentPerksValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_currentPerksValueChanged
+        this.txtPerkDescription.setText(forge.getPerk(this.currentPerks.getSelectedValue()).getDescription());
+    }//GEN-LAST:event_currentPerksValueChanged
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        for(Domain dom : forge.getDomains()){
+            for(Perk perk : dom.getPerks()){
+                if(perk.getName().equals(this.availablePerks.getSelectedValue())){
+                    perk.setActive(true);
                 }
-                
-                for(String perk : perks){
-                    String type = perk.split("\\|\\|")[0];
-                    String name = perk.split("\\|\\|")[1];
-                    String description = perk.split("\\|\\|")[2].replaceAll("newLinePlacement", System.lineSeparator());
-                    perkList.put(name, description);
-                    
-                    if(type.equals("current")){
-                        this.currentModel.addElement(name);
-                    }
-                    
-                    if(type.equals("available")){
-                        this.availableModel.addElement(name);
-                    }
-                }
-                
-            }catch(FileNotFoundException e){}
-            
-            this.availablePerks.setModel(availableModel);
-            this.currentPerks.setModel(currentModel);
+            }
         }
-    }//GEN-LAST:event_btnImportActionPerformed
+        this.setModels();
+    }//GEN-LAST:event_btnAddActionPerformed
 
+    private void availablePerksValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_availablePerksValueChanged
+        this.txtPerkDescription.setText(forge.getPerk(this.availablePerks.getSelectedValue()).getDescription());
+    }//GEN-LAST:event_availablePerksValueChanged
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        //if enter is pressed do the code below
+        searchForPerkInModels(this.txtSearch.getText().toLowerCase());
+    }//GEN-LAST:event_txtSearchActionPerformed
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+       
+        
+
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                        try {
+                            UIManager.setLookAndFeel(new NimbusLookAndFeel());
+                            UIManager.put("control", new Color(128, 128, 128));
+                            UIManager.put("info", new Color(128, 128, 128));
+                            UIManager.put("nimbusBase", new Color(18, 30, 49));
+                            UIManager.put("nimbusAlertYellow", new Color(248, 187, 0));
+                            UIManager.put("nimbusDisabledText", new Color(128, 128, 128));
+                            UIManager.put("nimbusFocus", new Color(115, 164, 209));
+                            UIManager.put("nimbusGreen", new Color(176, 179, 50));
+                            UIManager.put("nimbusInfoBlue", new Color(66, 139, 221));
+                            UIManager.put("nimbusLightBackground", new Color(18, 30, 49));
+                            UIManager.put("nimbusOrange", new Color(191, 98, 4));
+                            UIManager.put("nimbusRed", new Color(169, 46, 34));
+                            UIManager.put("nimbusSelectedText", new Color(255, 255, 255));
+                            UIManager.put("nimbusSelectionBackground", new Color(104, 93, 156));
+                            UIManager.put("text", new Color(230, 230, 230));
+                        } catch (UnsupportedLookAndFeelException exc) {
+                            System.err.println("Nimbus: Unsupported Look and feel!");
+                        }
+                break;
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(mainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(mainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(mainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(mainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -415,23 +619,42 @@ public class mainWindow extends javax.swing.JFrame {
 
     
     Map<String,String> perkList = new HashMap<>();
-    DefaultListModel availableModel;
-    DefaultListModel currentModel;
+    DefaultListModel availablePerksModel = new DefaultListModel();
+    DefaultListModel currentPerksModel = new DefaultListModel();
+    DefaultListModel availableDomainsModel = new DefaultListModel();
+    DefaultListModel currentDomainsModel = new DefaultListModel();
+    Forge forge = new Forge();
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane availableDomainPane;
+    private javax.swing.JList<String> availableDomains;
     private javax.swing.JScrollPane availablePerkPane;
     private javax.swing.JList<String> availablePerks;
     private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnExport;
-    private javax.swing.JButton btnImport;
-    private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnAddDomain;
     private javax.swing.JButton btnRemove;
+    private javax.swing.JButton btnRemoveDomain;
     private javax.swing.JButton btnRollPerk;
+    private javax.swing.JButton btnRollPerk1;
+    private javax.swing.JScrollPane currentDomainPane;
+    private javax.swing.JList<String> currentDomains;
     private javax.swing.JScrollPane currentPerkPane;
     private javax.swing.JList<String> currentPerks;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JMenuItem mnuLoad;
+    private javax.swing.JMenuItem mnuOpen;
+    private javax.swing.JMenuItem mnuSave;
     private javax.swing.JTextField txtCP;
     private javax.swing.JTextArea txtPerkDescription;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }
