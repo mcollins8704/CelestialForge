@@ -17,6 +17,7 @@ import java.io.Serializable;
  */
 public class Forge implements Serializable {
     ArrayList<Domain> celestialForge;
+    int points;
     
     @Override
     public String toString(){
@@ -28,6 +29,14 @@ public class Forge implements Serializable {
     }
     public Forge(ArrayList<Domain> forge){
         this.celestialForge = forge;
+    }
+    
+    public int getPoints(){
+        return points;
+    }
+    
+    public void setPoints(int points){
+        this.points = points;
     }
     
     public ArrayList<String> getDomainNames(){

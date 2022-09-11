@@ -53,12 +53,13 @@ public class WriterReader {
             fi.close();
         } catch (FileNotFoundException e) {
                 System.out.println("File not found");
-        }catch (IOException e) {
-                System.out.println("Error initializing stream");
-        } catch (ClassNotFoundException ex) {
+        }catch (ClassNotFoundException ex) {
             Logger.getLogger(WriterReader.class.getName()).log(Level.SEVERE, null, ex);
-        }  
+        } catch (IOException ex) {  
+            Logger.getLogger(WriterReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return pr1;
     }
+    
     
 }

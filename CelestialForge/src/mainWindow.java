@@ -180,17 +180,14 @@ public class mainWindow extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(9, 9, 9)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtCP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnRollPerk1)
                         .addComponent(btnRollPerk)
-                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(txtCP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
@@ -430,7 +427,13 @@ public class mainWindow extends javax.swing.JFrame {
         save.setDialogTitle("Open File");
         
         if(save.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-            this.forge = WriterReader.read(save.getSelectedFile());
+            try{
+                this.forge = WriterReader.read(save.getSelectedFile());
+                if(this.forge.getDomains().size() < 1){
+                    this.forge = WriterReader.read(save.getSelectedFile());
+                }
+            }catch(Exception e){
+            }
         }
         this.setModels();
     }//GEN-LAST:event_mnuLoadActionPerformed
@@ -439,8 +442,12 @@ public class mainWindow extends javax.swing.JFrame {
         JFileChooser save = new JFileChooser();
         save.setDialogTitle("Save File");
         
+        
         if(save.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
-            WriterReader.write(this.forge, save.getSelectedFile());
+            try{
+                WriterReader.write(this.forge, save.getSelectedFile());
+            }catch(Exception e){
+            }
         }
     }//GEN-LAST:event_mnuSaveActionPerformed
 
