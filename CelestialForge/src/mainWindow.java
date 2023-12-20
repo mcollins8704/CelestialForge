@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
