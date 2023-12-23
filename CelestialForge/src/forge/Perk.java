@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * @author Michael
  */
 public class Perk implements Serializable {
+    String domain;
     String name;
     String description;
     int cost;
@@ -23,7 +24,12 @@ public class Perk implements Serializable {
                 + "Active:" + active;
     }
     
-    public Perk(String name, String description, int cost){
+    public String toDescription(){
+        return this.domain + "\n\n" + this.name + "\n\n" + this.description;
+    }
+    
+    public Perk(String name, String description, int cost, String domain){
+        this.domain = domain.trim();
         this.name = name.trim();
         this.description = description;
         this.cost = cost;
@@ -35,6 +41,13 @@ public class Perk implements Serializable {
     }
     public String getName(){
         return this.name.trim();
+    }
+    
+    public void setDomain(String domain){
+        this.domain = domain.trim();
+    }
+    public String getDomain(){
+        return this.domain.trim();
     }
     
     public void setActive(boolean active){

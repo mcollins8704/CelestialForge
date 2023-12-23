@@ -68,7 +68,7 @@ public class Forge implements Serializable {
                 }
             }
         }
-        return new Perk("unk", "Unknown perk", 0);
+        return new Perk("unk", "Unknown perk", 0, "ink");
     }
     
 }

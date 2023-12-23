@@ -85,6 +85,11 @@ public class mainWindow extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        availablePerks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                availablePerksMouseClicked(evt);
+            }
+        });
         availablePerks.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 availablePerksValueChanged(evt);
@@ -103,6 +108,11 @@ public class mainWindow extends javax.swing.JFrame {
             String[] strings = { };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        currentPerks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                currentPerksMouseClicked(evt);
+            }
         });
         currentPerks.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -449,7 +459,7 @@ public class mainWindow extends javax.swing.JFrame {
                         //currentPerksModel.addElement(perk.getName().trim());
                     }else if (perk.getName().toLowerCase().contains(searchText)){
                         availablePerksModel.addElement(perk.getName().trim());
-                        this.txtPerkDescription.setText(perk.getName() + "\n\n" + perk.getDescription());
+                        this.txtPerkDescription.setText(perk.toDescription());
                     }
                 }
             }
@@ -569,15 +579,15 @@ public class mainWindow extends javax.swing.JFrame {
         String rolledPerk = this.availablePerksModel.getElementAt(randomNum).toString();
         //"Standard", "Reroll", "Spamroll", "Lowest of 10"
         System.out.println(rollType);
+        this.setModels();
+        
         switch (rollType){
                 case "Standard":
                     this.forge.setPoints(this.forge.getPoints() + 100);
-                    this.setModels();
                     randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
                     this.rollSearch(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getName().trim().toLowerCase());
                     break;
                 case "Budget Roll":
-                    this.setModels();
                     randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
                     while(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost() > forge.getPoints()){
                         randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
@@ -585,21 +595,23 @@ public class mainWindow extends javax.swing.JFrame {
                     this.rollSearch(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getName().trim().toLowerCase());
                     break;
                 case "Lowest of 10":
-                    
                     String currentPerk = "";
                     int perkTotal = 0;
+                    int failAt = 0;
                     while(perkTotal < 10){
                         this.setModels();
                         randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
-                        while(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost() > forge.getPoints()){
+                        
+                        while(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost() > forge.getPoints() && failAt < 100){
                             randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
                         }
-                        System.out.println("Current Perk: " + currentPerk);
-                        System.out.println("Compared Perk: " + this.availablePerksModel.getElementAt(randomNum).toString());
+                        failAt = 0;
+                        
                         if(currentPerk.equals("") || (this.forge.getPerk(currentPerk).getCost() > forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost())){
                             currentPerk = this.availablePerksModel.getElementAt(randomNum).toString();
                             System.out.println("perks have been swapped");
                         }
+                        
                         perkTotal = perkTotal + 1;
                     }
                     this.rollSearch(currentPerk.trim().toLowerCase());
@@ -612,7 +624,7 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRollPerkActionPerformed
 
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
-        Perk perkMoved = new Perk("", "", 0);
+        Perk perkMoved = new Perk("", "", 0, "");
         for(Domain dom : forge.getDomains()){
             for(Perk perk : dom.getPerks()){
                 if(perk.getName().equals(this.currentPerks.getSelectedValue())){
@@ -626,11 +638,11 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     private void currentPerksValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_currentPerksValueChanged
-        this.txtPerkDescription.setText(forge.getPerk(this.currentPerks.getSelectedValue()).getDescription());
+        
     }//GEN-LAST:event_currentPerksValueChanged
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        Perk perkMoved = new Perk("", "", 0);
+        Perk perkMoved = new Perk("", "", 0, "");
         for(Domain dom : forge.getDomains()){
             for(Perk perk : dom.getPerks()){
                 if(perk.getName().equals(this.availablePerks.getSelectedValue())){
@@ -644,7 +656,7 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void availablePerksValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_availablePerksValueChanged
-        this.txtPerkDescription.setText(forge.getPerk(this.availablePerks.getSelectedValue()).getDescription());
+        
     }//GEN-LAST:event_availablePerksValueChanged
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
@@ -658,7 +670,7 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnBuyPerkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuyPerkActionPerformed
-        Perk perkMoved = new Perk("", "", 0);
+        Perk perkMoved = new Perk("", "", 0, "");
         for(Domain dom : forge.getDomains()){
             for(Perk perk : dom.getPerks()){
                 if(perk.getName().equals(this.availablePerks.getSelectedValue())){
@@ -675,7 +687,7 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBuyPerkActionPerformed
 
     private void btnSellPerkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSellPerkActionPerformed
-        Perk perkMoved = new Perk("", "", 0);
+        Perk perkMoved = new Perk("", "", 0, "");
         for(Domain dom : forge.getDomains()){
             for(Perk perk : dom.getPerks()){
                 if(perk.getName().equals(this.currentPerks.getSelectedValue())){
@@ -692,6 +704,14 @@ public class mainWindow extends javax.swing.JFrame {
     private void txtCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCPActionPerformed
         this.forge.setPoints(Integer.parseInt(this.txtCP.getText()));
     }//GEN-LAST:event_txtCPActionPerformed
+
+    private void currentPerksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_currentPerksMouseClicked
+        this.txtPerkDescription.setText(forge.getPerk(this.currentPerks.getSelectedValue()).toDescription());
+    }//GEN-LAST:event_currentPerksMouseClicked
+
+    private void availablePerksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_availablePerksMouseClicked
+        this.txtPerkDescription.setText(forge.getPerk(this.availablePerks.getSelectedValue()).toDescription());
+    }//GEN-LAST:event_availablePerksMouseClicked
     
     /**
      * @param args the command line arguments
@@ -748,7 +768,7 @@ public class mainWindow extends javax.swing.JFrame {
     DefaultListModel availableDomainsModel = new DefaultListModel();
     DefaultListModel currentDomainsModel = new DefaultListModel();
     Forge forge = new Forge();
-    Perk lastRoll = new Perk("","",0);
+    Perk lastRoll = new Perk("","",0, "");
     ArrayList<Perk> tenPerks = new ArrayList<Perk>();
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

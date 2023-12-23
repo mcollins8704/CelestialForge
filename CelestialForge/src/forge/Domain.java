@@ -30,7 +30,7 @@ public class Domain implements Serializable {
         this.addPerks(this.parsePerkBlob(data.split(System.lineSeparator()+ "-")));
     }
     
-    public static ArrayList<Perk> parsePerkBlob(String[] perkBlob){
+    public ArrayList<Perk> parsePerkBlob(String[] perkBlob){
         ArrayList<Perk> perks = new ArrayList<>();
         for(String strPerkBlob : perkBlob){
             if(strPerkBlob.contains("CP)")){
@@ -50,7 +50,7 @@ public class Domain implements Serializable {
                         perkName = x + "CP)";
                     }
                 }
-                perks.add(new Perk(perkName.trim(), perkDescription.trim(), parseCost(perkName)));
+                perks.add(new Perk(perkName.trim(), perkDescription.trim(), parseCost(perkName), this.getName()));
             }
         }
         return perks;
