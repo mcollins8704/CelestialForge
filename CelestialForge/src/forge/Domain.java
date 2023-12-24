@@ -1,6 +1,5 @@
 package forge;
 import java.util.ArrayList;
-import forge.Perk;
 import static forge.Perk.parseCost;
 import java.io.Serializable;
 import java.util.Random;

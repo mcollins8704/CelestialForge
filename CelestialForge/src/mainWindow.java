@@ -1,9 +1,14 @@
-import forge.*;
+
+
+import forge.Perk;
+import forge.Forge;
+import forge.Domain;
 import toolKits.*;
 import java.awt.Color;
 import javax.swing.JFileChooser;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,6 +127,7 @@ public class mainWindow extends javax.swing.JFrame {
         currentPerkPane.setViewportView(currentPerks);
 
         txtCP.setText("0000");
+        txtCP.setEditable(false);
         txtCP.setText("0");
         txtCP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -347,7 +353,7 @@ public class mainWindow extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        mnuOpen.setText("Open");
+        mnuOpen.setText("New Forge");
         mnuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mnuOpenActionPerformed(evt);
@@ -355,7 +361,7 @@ public class mainWindow extends javax.swing.JFrame {
         });
         jMenu1.add(mnuOpen);
 
-        mnuLoad.setText("Load");
+        mnuLoad.setText("Load Forge");
         mnuLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mnuLoadActionPerformed(evt);
@@ -363,7 +369,7 @@ public class mainWindow extends javax.swing.JFrame {
         });
         jMenu1.add(mnuLoad);
 
-        mnuSave.setText("Save");
+        mnuSave.setText("Save Forge");
         mnuSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mnuSaveActionPerformed(evt);
@@ -496,14 +502,16 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_availableDomainsValueChanged
 
     private void mnuLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuLoadActionPerformed
-        JFileChooser save = new JFileChooser();
-        save.setDialogTitle("Open File");
+        String currentDirectory = System.getProperty("user.dir");
         
-        if(save.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+        JFileChooser load = new JFileChooser(currentDirectory);
+        load.setDialogTitle("Open File");
+        
+        if(load.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
             try{
-                this.forge = WriterReader.read(save.getSelectedFile());
+                this.forge = WriterReader.read(load.getSelectedFile());
                 if(this.forge.getDomains().size() < 1){
-                    this.forge = WriterReader.read(save.getSelectedFile());
+                    this.forge = WriterReader.read(load.getSelectedFile());
                 }
             }catch(Exception e){
             }
@@ -512,7 +520,9 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_mnuLoadActionPerformed
 
     private void mnuSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuSaveActionPerformed
-        JFileChooser save = new JFileChooser();
+        String currentDirectory = System.getProperty("user.dir");
+        
+        JFileChooser save = new JFileChooser(currentDirectory);
         save.setDialogTitle("Save File");
         
         
@@ -529,56 +539,63 @@ public class mainWindow extends javax.swing.JFrame {
         Domain domain = null;
         ArrayList<Perk> perks = new ArrayList<>();
         ArrayList<String> strPerkBlobs = new ArrayList<>();
-        JFileChooser chooser = new JFileChooser();
         availablePerksModel = new DefaultListModel();
         currentPerksModel = new DefaultListModel();
         
-        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        int result = chooser.showOpenDialog(this);
+        String errLine = "";
         
-        if(result == JFileChooser.APPROVE_OPTION){
-            File file = chooser.getSelectedFile();
-            try{
-                Scanner myReader = new Scanner(file, "UTF-8");
-                while(myReader.hasNextLine()){
-                    data.append(myReader.nextLine().trim() + System.lineSeparator());
-                    data.append(System.lineSeparator());
-                }
+
+        try (InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream("resources/cfv3.txt")) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 
-                int domainCount = 0;
-                for(String line : data.toString().split("---")){
-                    if(line.length() > 1){
-                        //if domain line, create a new domain
-                        if((line.contains("Perks)") && line.contains("Domain"))){
-                            domain = new Domain(line, new ArrayList<Perk>());
-                        }else{
-                        //if not a domain line, it must be a perk line
-                            //use class method to add all perks from perk blob
-                            domain.parsePerks(line);
-                            
-                            //add all the perks from the domain to the celestial forge
-                            forge.addDomain(new Domain(domain.getName().toString(), domain.getPerks()));
-                            
-                            //reset for next domain
-                            domain = null;
-                            perks.clear();
-                            
-                        }
+            String rl = "";
+            while((rl = reader.readLine()) != null){
+                data.append(rl.trim() + System.lineSeparator());
+                data.append(System.lineSeparator());
+            }
+
+            int domainCount = 0;
+            for(String line : data.toString().split("---")){
+                if(line.length() > 5){
+                    //if domain line, create a new domain
+                    if((line.contains("Perks)") && line.contains("Domain"))){
+                        domain = new Domain(line, new ArrayList<Perk>());
+                    }else{
+                    //if not a domain line, it must be a perk line
+                        //use class method to add all perks from perk blob
+                        domain.parsePerks(line);
+
+                        //add all the perks from the domain to the celestial forge
+                        forge.addDomain(new Domain(domain.getName().toString(), domain.getPerks()));
+
+                        //reset for next domain
+                        domain = null;
+                        perks.clear();
+
                     }
                 }
-            }catch(FileNotFoundException e){}
-            this.setModels();
-            
+            }
+        }catch(FileNotFoundException e){
+            getStackTraceAsString(e);
         }
-        
+        catch(Exception e){
+            this.txtPerkDescription.setText(data.toString());
+        }
+        this.setModels();
     }//GEN-LAST:event_mnuOpenActionPerformed
 
+    private void getStackTraceAsString(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        this.txtPerkDescription.setText(sw.toString());
+    }
+    
     private void btnRollPerkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRollPerkActionPerformed
         String rollType = this.cmbRollType.getSelectedItem().toString();
         int randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
         String rolledPerk = this.availablePerksModel.getElementAt(randomNum).toString();
         //"Standard", "Reroll", "Spamroll", "Lowest of 10"
-        System.out.println(rollType);
         this.setModels();
         
         switch (rollType){
@@ -589,7 +606,8 @@ public class mainWindow extends javax.swing.JFrame {
                     break;
                 case "Budget Roll":
                     randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
-                    while(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost() > forge.getPoints()){
+                    int helpStepbroImStuck = 0;
+                    while(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost() > forge.getPoints() && helpStepbroImStuck < 500){
                         randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
                     }
                     this.rollSearch(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getName().trim().toLowerCase());
@@ -597,23 +615,17 @@ public class mainWindow extends javax.swing.JFrame {
                 case "Lowest of 10":
                     String currentPerk = "";
                     int perkTotal = 0;
-                    int failAt = 0;
                     while(perkTotal < 10){
-                        this.setModels();
                         randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
-                        
-                        while(forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost() > forge.getPoints() && failAt < 100){
-                            randomNum = ThreadLocalRandom.current().nextInt(0, this.availablePerksModel.getSize());
-                        }
-                        failAt = 0;
                         
                         if(currentPerk.equals("") || (this.forge.getPerk(currentPerk).getCost() > forge.getPerk(this.availablePerksModel.getElementAt(randomNum).toString()).getCost())){
                             currentPerk = this.availablePerksModel.getElementAt(randomNum).toString();
-                            System.out.println("perks have been swapped");
                         }
                         
-                        perkTotal = perkTotal + 1;
+                        perkTotal++;
                     }
+                    
+                    this.setModels();
                     this.rollSearch(currentPerk.trim().toLowerCase());
                     
                     break;      
