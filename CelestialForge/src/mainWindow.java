@@ -536,6 +536,7 @@ public class mainWindow extends javax.swing.JFrame {
 
     private void mnuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuOpenActionPerformed
         StringBuilder data = new StringBuilder();
+        this.forge = new Forge();
         Domain domain = null;
         ArrayList<Perk> perks = new ArrayList<>();
         ArrayList<String> strPerkBlobs = new ArrayList<>();
